@@ -1,25 +1,59 @@
 const express = require('express');
-const fs = require('fs'); // Module natif Node.js pour lire les fichiers
+const fs = require('fs');
 const app = express();
 const port = 3000;
 
-app.get('/', (req, res) => {
-    const queryParams = req.query;
+// Permet de lire le corps des requêtes POST (formulaire classique ou JSON)
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Évite qu'une valeur saisie soit interprétée comme du HTML (faille XSS)
+function echapper(valeur) {
+    return String(valeur)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+// Transforme un objet en lignes de tableau HTML
+function construireLignes(objet, messageVide) {
     let rows = '';
-    for (const [key, value] of Object.entries(queryParams)) {
-        rows += `<tr><td>${key}</td><td>${value}</td></tr>`;
+    for (const [key, value] of Object.entries(objet)) {
+        rows += `<tr><td>${echapper(key)}</td><td>${echapper(value)}</td></tr>`;
     }
     if (rows === '') {
-        rows = '<tr><td colspan="2">Aucun paramètre dans l\'URL</td></tr>';
+        rows = `<tr><td colspan="2">${messageVide}</td></tr>`;
     }
-    fs.readFile('./index.html', 'utf8', (err, htmlContent) => {
+    return rows;
+}
+
+// Lit index.html, remplace les deux marqueurs et envoie la page
+function envoyerPage(res, rowsGet, rowsPost) {
+    fs.readFile('./helloworld.html', 'utf8', (err, htmlContent) => {
         if (err) {
-            res.status(500).send("Erreur : impossible de lire le fichier index.html");
+            res.status(500).send('Erreur : impossible de lire le fichier index.html');
             return;
         }
-        const finalHtml = htmlContent.replace('<!-- TABLEAU_GET -->', rows);
+        const finalHtml = htmlContent
+            .replace('<!-- TABLEAU_GET -->', () => rowsGet)
+            .replace('<!-- TABLEAU_POST -->', () => rowsPost);
         res.send(finalHtml);
     });
+}
+
+// GET : affiche les paramètres de l'URL (ex : /?nom=Zawar&age=20)
+app.get('/', (req, res) => {
+    const rowsGet = construireLignes(req.query, "Aucun paramètre dans l'URL");
+    const rowsPost = construireLignes({}, 'Aucune donnée POST reçue');
+    envoyerPage(res, rowsGet, rowsPost);
+});
+
+// POST : affiche les données envoyées par le formulaire
+app.post('/', (req, res) => {
+    const rowsGet = construireLignes({}, "Aucun paramètre dans l'URL");
+    const rowsPost = construireLignes(req.body, 'Aucune donnée POST reçue');
+    envoyerPage(res, rowsGet, rowsPost);
 });
 
 app.listen(port, () => {

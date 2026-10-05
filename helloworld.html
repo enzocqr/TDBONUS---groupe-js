@@ -1,12 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>TD GET / POST</title>
 </head>
 <body>
-    <h1>HELLO WORLD</h1>
-    <script src="script.js"></script>
+
+  <h2>Test GET</h2>
+  <form action="/" method="GET">
+    <input type="text" name="nom" placeholder="Nom">
+    <input type="number" name="age" placeholder="Âge">
+    <button type="submit">Envoyer en GET</button>
+  </form>
+
+  <h3>Paramètres GET</h3>
+  <table border="1">
+    <tr><th>Clé</th><th>Valeur</th></tr>
+    <!-- TABLEAU_GET -->
+  </table>
+
+  <h2>Test POST</h2>
+  <form action="/" method="POST">
+    <input type="text" name="nom" placeholder="Nom">
+    <input type="number" name="age" placeholder="Âge">
+    <button type="submit">Envoyer en POST</button>
+  </form>
+
+  <h3>Données POST</h3>
+  <table border="1">
+    <tr><th>Clé</th><th>Valeur</th></tr>
+    <!-- TABLEAU_POST -->
+  </table>
+
 </body>
 </html>

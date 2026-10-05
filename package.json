@@ -19,5 +19,6 @@
   "homepage": "https://github.com/enzocqr/TDBONUS---groupe-js#readme",
   "dependencies": {
     "express": "^5.2.1"
-  }
+  },
+  "type": "commonjs"
 }
