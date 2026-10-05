@@ -28,11 +28,11 @@ function construireLignes(objet, messageVide) {
     return rows;
 }
 
-// Lit index.html, remplace les deux marqueurs et envoie la page
+// Lit helloworld.html, remplace les deux marqueurs et envoie la page
 function envoyerPage(res, rowsGet, rowsPost) {
     fs.readFile('./helloworld.html', 'utf8', (err, htmlContent) => {
         if (err) {
-            res.status(500).send('Erreur : impossible de lire le fichier index.html');
+            res.status(500).send('Erreur : impossible de lire le fichier helloworld.html');
             return;
         }
         const finalHtml = htmlContent
@@ -42,7 +42,7 @@ function envoyerPage(res, rowsGet, rowsPost) {
     });
 }
 
-// GET : affiche les paramètres de l'URL (ex : /?nom=Zawar&age=20)
+// GET : affiche les paramètres de l'URL
 app.get('/', (req, res) => {
     const rowsGet = construireLignes(req.query, "Aucun paramètre dans l'URL");
     const rowsPost = construireLignes({}, 'Aucune donnée POST reçue');
